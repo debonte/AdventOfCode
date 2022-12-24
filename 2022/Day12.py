@@ -82,14 +82,14 @@ def isLegalMove(grid: list[list[str]], start: Point, end: Point) -> bool:
     return endLetter <= startLetter + 1
     
 
-def dijkstra(grid: list[list[str]]) -> int:
+def dijkstra(grid: list[list[str]], part2 = False) -> int:
     queue: PriorityQueue[PriorityQueueItem] = PriorityQueue()
     dist: dict[Point, int] = dict()
 
-    start = find("S", grid)
-    end = find("E", grid)
-
-    queue.put(PriorityQueueItem(start, 0))
+    for iLine, line in enumerate(grid):
+        for iChar, char in enumerate(line):
+            if char == "S" or (part2 and char == "a"):
+                queue.put(PriorityQueueItem(Point(iLine, iChar), 0))
 
     while not queue.empty():
         current = queue.get()
@@ -105,9 +105,10 @@ def dijkstra(grid: list[list[str]]) -> int:
             if isLegalMove(grid, current.point, testPoint):
                 queue.put(PriorityQueueItem(testPoint, current.distance + 1))
 
+    end = find("E", grid)
     return dist[end]    
 
 
 grid = loadFile("Data\\Day12.txt")
-bestDistance = dijkstra(grid)
+bestDistance = dijkstra(grid, True)
 print(bestDistance)
