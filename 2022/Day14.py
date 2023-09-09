@@ -7,16 +7,18 @@ class Point:
         nums = input.split(",")
         self.x = int(nums[0])
         self.y = int(nums[1])
-        
 
-Path: TypeAlias = list[Point]
-Grid: TypeAlias = list[list[str]]
 
+SAND_START_POINT = Point("500,0")
 
 class Material(StrEnum):
     Air = "."
     Rock = "#"
     Sand = "o"
+
+
+Path: TypeAlias = list[Point]
+Grid: TypeAlias = list[list[Material]]
 
 
 def loadFile(filePath: str) -> list[Path]:
@@ -41,7 +43,7 @@ def getGridSize(paths: list[Path]) -> Tuple[int, int]:
             maxX = max(point.x, maxX)
             maxY = max(point.y, maxY)
             
-    return (maxX + 2, maxY + 1)
+    return (max(maxX, SAND_START_POINT.x + maxY) + 2, maxY + 3)
 
 
 def createGrid(paths: list[Path]) -> Grid:
@@ -63,29 +65,40 @@ def createGrid(paths: list[Path]) -> Grid:
     return grid
 
 
+def addFloor(grid: Grid):
+    for x in range(len(grid[0])):
+        grid[len(grid) - 1][x] = Material.Rock
+
+
 def printGrid(grid: Grid):
     for line in grid:
         print(*line, sep = "")
 
 
-def tryPourSand(grid: Grid) -> bool:
-    x = 500
-    y = 0
+def tryPourSand(grid: Grid, part2 = False) -> bool:
+    x = SAND_START_POINT.x
+    y = SAND_START_POINT.y
+    maxY = len(grid) - 1
+    maxX = len(grid[0]) - 1
     
-    while y < len(grid) - 1:
+    if part2 and grid[SAND_START_POINT.y][SAND_START_POINT.x] == Material.Sand:
+        return False
+
+    while y < maxY:
         if grid[y+1][x] == Material.Air:
             y += 1
             continue
-        elif grid[y+1][x-1] == Material.Air:
+        elif x > 0 and grid[y+1][x-1] == Material.Air:
             y += 1
             x -= 1
             continue
-        elif grid[y+1][x+1] == Material.Air:
+        elif x < maxX and grid[y+1][x+1] == Material.Air:
             y += 1
             x += 1
             continue
         
         grid[y][x] = Material.Sand
+
         return True
 
     return False
@@ -95,9 +108,24 @@ paths = loadFile("Data\\Day14.txt")
 grid = createGrid(paths)
 # printGrid(grid)
 
+#### Part 1
+
 numSandUnits = 0
 while tryPourSand(grid):
     numSandUnits += 1
     # printGrid(grid)
 
-print(numSandUnits)
+print(f"Part1: {numSandUnits}")
+
+#### Part 2
+
+grid = createGrid(paths)
+addFloor(grid)
+
+numSandUnits = 0
+while tryPourSand(grid, True):
+    numSandUnits += 1
+    # printGrid(grid)
+
+print(f"Part2: {numSandUnits}")
+# printGrid(grid)
