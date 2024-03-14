@@ -1,0 +1,10 @@
+{
+    "editor.renderWhitespace": "all",
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.indentSize": "tabSize",
+        "editor.detectIndentation": false,
+    },
+    "python.analysis.typeCheckingMode": "basic",
+}

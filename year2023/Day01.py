@@ -1,6 +1,4 @@
-def loadFile(filePath: str) -> list[str]:
-    with open(filePath, "r") as reader:
-        return [x.strip() for x in reader.readlines()]
+from utils import getLinesFromFile
 
 
 NUMBER_WORDS = {
@@ -44,6 +42,6 @@ def getNumber(line: str) -> int:
     return result
 
 
-lines = loadFile("Data/Day01.txt")
+lines = getLinesFromFile("Data/Day01.txt")
 numbers = [getNumber(x) for x in lines]
 print(sum(numbers))
